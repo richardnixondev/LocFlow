@@ -45,6 +45,16 @@ class TranslationSerializer(serializers.ModelSerializer):
         return data
 
 
+class TranslationSuggestionSerializer(serializers.Serializer):
+    source_text = serializers.CharField()
+    translated_text = serializers.CharField()
+    similarity = serializers.FloatField()
+    project_name = serializers.CharField()
+    project_slug = serializers.SlugField()
+    string_key = serializers.CharField()
+    language_code = serializers.CharField()
+
+
 class ProgressSerializer(serializers.Serializer):
     total_strings = serializers.IntegerField()
     languages = serializers.ListField()

@@ -132,3 +132,9 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'Localization Automation Platform API',
     'VERSION': '1.0.0',
 }
+
+# Translation Memory
+TRANSLATION_MEMORY = {
+    'MIN_SIMILARITY': 0.7,
+    'MAX_RESULTS': 10,
+}

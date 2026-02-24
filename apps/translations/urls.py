@@ -18,4 +18,9 @@ urlpatterns = [
         views.translation_progress,
         name="translation-progress",
     ),
+    path(
+        "projects/<slug:slug>/strings/<uuid:string_id>/suggestions/",
+        views.translation_suggestions,
+        name="translation-suggestions",
+    ),
 ]
