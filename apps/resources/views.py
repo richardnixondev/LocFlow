@@ -1,8 +1,10 @@
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+
+from apps.accounts.permissions import IsManagerOrAbove
 
 from apps.projects.models import Project
 from apps.resources.models import ResourceFile, TranslatableString
@@ -17,6 +19,7 @@ from parsers.factory import ParserFactory
 
 
 @api_view(["POST"])
+@permission_classes([IsManagerOrAbove])
 def upload_resource(request, slug):
     """Upload a resource file for parsing and string extraction."""
     project = get_object_or_404(Project, slug=slug)

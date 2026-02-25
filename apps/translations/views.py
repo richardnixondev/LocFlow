@@ -2,8 +2,10 @@ from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+
+from apps.accounts.permissions import IsTranslatorOrAbove
 
 from apps.projects.models import Project
 from apps.resources.models import TranslatableString
@@ -16,6 +18,7 @@ from apps.translations.services import get_suggestions
 
 
 @api_view(["POST"])
+@permission_classes([IsTranslatorOrAbove])
 def create_translation(request, slug, string_id):
     """Submit a translation for a string."""
     project = get_object_or_404(Project, slug=slug)
@@ -34,6 +37,7 @@ def create_translation(request, slug, string_id):
 
 
 @api_view(["PUT", "PATCH"])
+@permission_classes([IsTranslatorOrAbove])
 def update_translation(request, slug, string_id, language):
     """Update a translation for a string in a specific language."""
     project = get_object_or_404(Project, slug=slug)
