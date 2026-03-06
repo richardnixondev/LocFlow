@@ -26,5 +26,18 @@ services:
     env_file:
       - .env
 
+  frontend:
+    build: ./frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - "3000:3000"
+    environment:
+      API_URL: http://web:8000
+    depends_on:
+      - web
+
 volumes:
   postgres_data:
