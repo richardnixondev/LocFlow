@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
+    'corsheaders',
     'django_filters',
     'drf_spectacular',
     # Local apps
@@ -46,7 +47,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -60,7 +63,7 @@ ROOT_URLCONF = 'locflow.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,8 +79,9 @@ TEMPLATES = [
 WSGI_APPLICATION = 'locflow.wsgi.application'
 
 # Database
-# Parse DATABASE_URL: postgres://user:pass@host:port/dbname
+# Supports DATABASE_URL format or individual POSTGRES_* env vars
 DATABASE_URL = os.getenv('DATABASE_URL', '')
+POSTGRES_HOST = os.getenv('POSTGRES_HOST', '')
 
 if DATABASE_URL:
     _db_url = urlparse(DATABASE_URL)
@@ -89,6 +93,17 @@ if DATABASE_URL:
             'PASSWORD': _db_url.password or '',
             'HOST': _db_url.hostname or 'localhost',
             'PORT': str(_db_url.port or 5432),
+        }
+    }
+elif POSTGRES_HOST:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('POSTGRES_DB', 'locflow'),
+            'USER': os.getenv('POSTGRES_USER', 'locflow'),
+            'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+            'HOST': POSTGRES_HOST,
+            'PORT': os.getenv('POSTGRES_PORT', '5432'),
         }
     }
 else:
@@ -162,10 +177,43 @@ SPECTACULAR_SETTINGS = {
             },
         },
     },
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'persistAuthorization': True,
+    },
 }
+
+# CORS
+CORS_ALLOWED_ORIGINS = os.getenv(
+    'CORS_ALLOWED_ORIGINS', 'http://localhost:3000'
+).split(',')
+CORS_ALLOW_CREDENTIALS = True
 
 # Translation Memory
 TRANSLATION_MEMORY = {
     'MIN_SIMILARITY': 0.7,
     'MAX_RESULTS': 10,
 }
+
+# WhiteNoise static files compression
+STORAGES = {
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
+
+# Production security settings (when behind Traefik reverse proxy)
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
+
+    CSRF_TRUSTED_ORIGINS = [
+        'https://locflow.richardnixon.dev',
+    ]
+
+# Umami Analytics
+UMAMI_WEBSITE_ID = os.getenv('UMAMI_WEBSITE_ID', '')
