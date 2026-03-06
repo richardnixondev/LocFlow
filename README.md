@@ -89,7 +89,7 @@ make logs
 | 1 -- MVP | Upload, parsing, REST API, change detection, validation, Docker | In progress |
 | 2 -- Translation Memory | Elasticsearch, fuzzy search for similar strings | Planned |
 | 3 -- Auth & Cache | JWT, roles (admin/translator/reviewer), Redis cache | Planned |
-| 4 -- Dashboard | React/Vue frontend with language progress and quality | Planned |
+| 4 -- Dashboard | Next.js frontend with language progress and translation editor | In progress |
 | 5 -- Integrations | Webhooks, CLI tool, Git integration | Planned |
 | 6 -- Advanced Pluralization | Full CLDR rules, ICU MessageFormat, advanced validation | Planned |
 

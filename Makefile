@@ -26,3 +26,12 @@ createsuperuser:
 
 logs:
 	docker compose logs -f web
+
+frontend-dev:
+	cd frontend && npm run dev
+
+frontend-build:
+	cd frontend && npm run build
+
+frontend-logs:
+	docker compose logs -f frontend
