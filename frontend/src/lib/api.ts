@@ -56,23 +56,26 @@ export async function login(username: string, password: string) {
   return data;
 }
 
-export async function register(
-  username: string,
-  email: string,
-  password: string,
-  password_confirm: string
-) {
-  const { data } = await api.post("/auth/register/", {
-    username,
-    email,
-    password,
-    password_confirm,
-  });
+export async function getMe() {
+  const { data } = await api.get("/auth/me/");
   return data;
 }
 
-export async function getMe() {
-  const { data } = await api.get("/auth/me/");
+export async function updateProfile(body: {
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+}) {
+  const { data } = await api.patch("/auth/me/", body);
+  return data;
+}
+
+export async function changePassword(body: {
+  old_password: string;
+  new_password: string;
+  new_password_confirm: string;
+}) {
+  const { data } = await api.post("/auth/change-password/", body);
   return data;
 }
 
@@ -214,4 +217,46 @@ export async function getSuggestions(
     { params: { language } }
   );
   return data;
+}
+
+// --- Users (admin) ---
+export interface UserData {
+  id: string;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  role: string;
+  is_active: boolean;
+  date_joined: string;
+}
+
+export async function createUser(body: {
+  username: string;
+  email: string;
+  password: string;
+  role?: string;
+  first_name?: string;
+  last_name?: string;
+}) {
+  const { data } = await api.post("/users/", body);
+  return data as UserData;
+}
+
+export async function getUsers() {
+  const { data } = await api.get("/users/");
+  return (data.results ?? data) as UserData[];
+}
+
+export async function getUser(id: string) {
+  const { data } = await api.get(`/users/${id}/`);
+  return data as UserData;
+}
+
+export async function updateUser(
+  id: string,
+  body: { role?: string; is_active?: boolean; email?: string; first_name?: string; last_name?: string }
+) {
+  const { data } = await api.patch(`/users/${id}/`, body);
+  return data as UserData;
 }

@@ -2,7 +2,6 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { login } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import { Globe } from "lucide-react";
@@ -78,10 +77,7 @@ export default function LoginPage() {
           </button>
 
           <p className="text-sm text-center text-gray-500">
-            No account?{" "}
-            <Link href="/register" className="text-blue-600 hover:underline">
-              Register
-            </Link>
+            Contact your administrator for an account.
           </p>
         </form>
       </div>

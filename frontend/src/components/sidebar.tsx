@@ -8,16 +8,20 @@ import {
   FolderOpen,
   LogOut,
   Globe,
+  Users,
 } from "lucide-react";
-
-const nav = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/dashboard", label: "Projects", icon: FolderOpen },
-];
 
 export default function Sidebar() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+
+  const nav = [
+    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/dashboard", label: "Projects", icon: FolderOpen },
+    ...(user?.role === "admin"
+      ? [{ href: "/dashboard/users", label: "Users", icon: Users }]
+      : []),
+  ];
 
   return (
     <aside className="fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 text-gray-100 flex flex-col">
@@ -48,10 +52,13 @@ export default function Sidebar() {
 
       <div className="border-t border-gray-800 px-4 py-4">
         <div className="flex items-center justify-between">
-          <div className="min-w-0">
+          <Link
+            href="/dashboard/profile"
+            className="min-w-0 hover:opacity-80 transition-opacity"
+          >
             <p className="text-sm font-medium truncate">{user?.username}</p>
             <p className="text-xs text-gray-500 truncate">{user?.role}</p>
-          </div>
+          </Link>
           <button
             onClick={logout}
             className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"

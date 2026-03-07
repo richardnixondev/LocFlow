@@ -131,7 +131,10 @@ def sync_repo(gh: GitHubRepo) -> dict:
 
         gh.last_synced_at = timezone.now()
         if results["files_found"] == 0:
-            exts = ", ".join(sorted(patterns))
+            exts = ", ".join(sorted(
+                set(gh.file_patterns) if gh.file_patterns else SUPPORTED_EXTENSIONS
+            ))
+            base = gh.base_path.strip("/")
             gh.last_sync_status = "warning"
             gh.last_sync_message = (
                 f"No resource files found. "
